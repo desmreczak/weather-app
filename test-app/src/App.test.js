@@ -157,12 +157,55 @@ describe("\nApp Component\n", () => {
 	})
 
 	it("should respond to button click and increase the month", () => {
-		var month = parseInt(mountWrap.find('.app').text().split(/[\s|(th)]+/)[1])
-		var expectedMonth = month + 1;
+		var month = mountWrap.find('.app').text().split(" ")[0]
+		var monthsList = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		var expectedMonth
 
+		if(month === "December") {
+			expectedMonth = "January"
+		} else {
+			expectedMonth = monthsList[monthsList.indexOf(month) + 1]
+		}
+
+		for(var i = 0; i < 13; i++) {
 		mountWrap.find('#month-up').simulate('click');
+		}
 
-		expect(mountWrap.find('.app').text().split(/[\s|(th)]+/)[1]).toBe(expectedMonth);
+		expect(mountWrap.find('.app').text().split(" ")[0]).toBe(expectedMonth);
+	})
+
+	it("should respond to button click and increase the day", () => {
+		var day = parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])
+		var expectedDay
+
+		if(day === 31) {
+			expectedDay = 1
+		} else {
+			expectedDay = day + 1
+		}
+
+		for(var i = 0; i < 32; i++) {
+		mountWrap.find('#day-up').simulate('click');
+		}
+
+		expect(parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])).toBe(expectedDay);
+	})
+
+	it("should respond to button click and increase the year", () => {
+		var year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]
+		var expectedYear
+
+		if(year === 2020) {
+			expectedYear = 2000
+		} else {
+			expectedYear = year + 1
+		}
+
+		for(var i = 0; i < 22; i++) {
+		mountWrap.find('#year-up').simulate('click');
+		}
+
+		expect(mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]).toBe(expectedYear);
 	})
 
 })
