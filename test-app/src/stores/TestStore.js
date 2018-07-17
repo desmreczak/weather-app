@@ -134,8 +134,10 @@ function formatMonth(month) {
 exports.formatMonth = formatMonth;
 function formatDay(day) {
     let days = ["", "st", "nd", "rd", "rth", "th"];
-    if (day < 5) {
-        return "" + day + days[day];
+    let tempArray = ("" + day).split("");
+    let lastDigitOfDay = parseInt(tempArray[tempArray.length - 1]);
+    if ((lastDigitOfDay < 5 && lastDigitOfDay > 0) && (day < 10 || day > 20)) {
+        return "" + day + days[lastDigitOfDay];
     }
     else {
         return "" + day + days[5];
@@ -154,7 +156,13 @@ function parseDate(date) {
 }
 exports.parseDate = parseDate;
 function KelvinToFahrenheit(kelvin) {
-    return Math.round((9.0 / 5.0) * (kelvin - 273) + 32);
+    let value = parseFloat((1.80 * (kelvin - 273.15) + 32).toFixed(3));
+    if (value >= 0) {
+        return Math.round(value);
+    }
+    else {
+        return (value % 0.5 === 0) ? Math.floor(value) : Math.round(value);
+    }
 }
 exports.KelvinToFahrenheit = KelvinToFahrenheit;
 function getIconURL(weather, weatherIcons) {

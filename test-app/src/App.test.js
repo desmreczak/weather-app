@@ -41,7 +41,7 @@ describe("\nTestStore Functions\n", () => {
 		store.day = 12
 		store.month = 7
 		store.year = 2018
-		expect(store.returnTempForGivenHour(15)).toBe("77°F")
+		expect(store.returnTempForGivenHour(15)).toBe("76°F")
 	})
 
 	it("should return image url for a given hour(military time)", () => {
@@ -104,8 +104,16 @@ describe("\nTestStore Helper Functions\n", () => {
 		expect(formatDay(3)).toBe("3rd")
 		expect(formatDay(4)).toBe("4rth")
 		expect(formatDay(5)).toBe("5th")
+		expect(formatDay(6)).toBe("6th")
+		expect(formatDay(7)).toBe("7th")
+		expect(formatDay(8)).toBe("8th")
+		expect(formatDay(9)).toBe("9th")
+		expect(formatDay(10)).toBe("10th")
 		expect(formatDay(11)).toBe("11th")
-		//expect(formatDay(21)).toBe("21st")
+		expect(formatDay(20)).toBe("20th")
+		expect(formatDay(21)).toBe("21st")
+		expect(formatDay(29)).toBe("29th")
+		expect(formatDay(30)).toBe("30th")
 	})
 
 	it("should return an hour from a given date string", () => {
@@ -122,8 +130,8 @@ describe("\nTestStore Helper Functions\n", () => {
 		expect(KelvinToFahrenheit(297)).toBe(75)
 		expect(KelvinToFahrenheit(297.54)).toBe(76)
 		expect(KelvinToFahrenheit(297.3167)).toBe(76)
-		//expect(KelvinToFahrenheit(297.31)).toBe(75)
-		//expect(KelvinToFahrenheit(250)).toBe(-10)
+		expect(KelvinToFahrenheit(297.31)).toBe(75)
+		expect(KelvinToFahrenheit(250)).toBe(-10)
 		expect(KelvinToFahrenheit(248)).toBe(-13)
 		expect(KelvinToFahrenheit(255.372)).toBe(0)
 	})
@@ -156,54 +164,124 @@ describe("\nApp Component\n", () => {
 		expect(renderWrap.find(".weather").length).toBe(5);
 	})
 
-	it("should respond to button click and increase the month", () => {
+	it("should respond to button click and increase the month (no wrapping)", () => {
+		store.month = 1
 		var month = mountWrap.find('.app').text().split(" ")[0]
 		var monthsList = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		var expectedMonth
+		var expectedMonth = monthsList[store.month + 1]
 
-		if(month === "December") {
-			expectedMonth = "January"
-		} else {
-			expectedMonth = monthsList[monthsList.indexOf(month) + 1]
-		}
-
-		for(var i = 0; i < 13; i++) {
 		mountWrap.find('#month-up').simulate('click');
-		}
 
 		expect(mountWrap.find('.app').text().split(" ")[0]).toBe(expectedMonth);
 	})
 
-	it("should respond to button click and increase the day", () => {
+	it("should respond to button click and increase the month (wrap around)", () => {
+		store.month = 12
+		var month = mountWrap.find('.app').text().split(" ")[0]
+		var expectedMonth = "January"
+
+		mountWrap.find('#month-up').simulate('click');
+
+		expect(mountWrap.find('.app').text().split(" ")[0]).toBe(expectedMonth);
+	})
+
+	it("should respond to button click and decrease the month (no wrapping)", () => {
+		store.month = 12
+		var month = mountWrap.find('.app').text().split(" ")[0]
+		var monthsList = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		var expectedMonth = monthsList[store.month - 1]
+
+		mountWrap.find('#month-down').simulate('click');
+
+		expect(mountWrap.find('.app').text().split(" ")[0]).toBe(expectedMonth);
+	})
+
+	it("should respond to button click and decrease the month (wrap around)", () => {
+		store.month = 1
+		var month = mountWrap.find('.app').text().split(" ")[0]
+		var expectedMonth = "December"
+
+		mountWrap.find('#month-down').simulate('click');
+
+		expect(mountWrap.find('.app').text().split(" ")[0]).toBe(expectedMonth);
+	})
+
+	it("should respond to button click and increase the day (no wrapping)", () => {
+		store.day = 1
 		var day = parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])
-		var expectedDay
+		var expectedDay = store.day + 1
 
-		if(day === 31) {
-			expectedDay = 1
-		} else {
-			expectedDay = day + 1
-		}
-
-		for(var i = 0; i < 32; i++) {
 		mountWrap.find('#day-up').simulate('click');
-		}
 
 		expect(parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])).toBe(expectedDay);
 	})
 
-	it("should respond to button click and increase the year", () => {
+	it("should respond to button click and increase the day (wrap around)", () => {
+		store.day = 31
+		var day = parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])
+		var expectedDay = 1
+
+		mountWrap.find('#day-up').simulate('click');
+
+		expect(parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])).toBe(expectedDay);
+	})
+
+	it("should respond to button click and decrease the day (no wrapping)", () => {
+		store.day = 31
+		var day = parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])
+		var expectedDay = store.day - 1
+	
+		mountWrap.find('#day-down').simulate('click');
+
+		expect(parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])).toBe(expectedDay);
+	})
+
+	it("should respond to button click and decrease the day (wrap around)", () => {
+		store.day = 1
+		var day = parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])
+		var expectedDay = 31
+
+		mountWrap.find('#day-down').simulate('click');
+
+		expect(parseInt(mountWrap.find('.app').text().split(/[\s|(th)|(st)|(nd)|(rd)|(rth)]+/)[1])).toBe(expectedDay);
+	})
+
+	it("should respond to button click and increase the year (no wrapping)", () => {
+		store.year = 2000
 		var year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]
-		var expectedYear
+		var expectedYear = store.year + 1
 
-		if(year === 2020) {
-			expectedYear = 2000
-		} else {
-			expectedYear = year + 1
-		}
-
-		for(var i = 0; i < 22; i++) {
 		mountWrap.find('#year-up').simulate('click');
-		}
+
+		expect(mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]).toBe(expectedYear);
+	})
+
+	it("should respond to button click and increase the year (wrap around)", () => {
+		store.year = 2020
+		var year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]
+		var expectedYear = 2000;
+
+		mountWrap.find('#year-up').simulate('click');
+
+		expect(mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]).toBe(expectedYear);
+	})
+
+	it("should respond to button click and decrease the year (no wrapping)", () => {
+		store.year = 2020
+		var year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]
+		var expectedYear = store.year - 1
+
+		mountWrap.find('#year-down').simulate('click');
+
+		expect(mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]).toBe(expectedYear);
+	})
+
+	it("should respond to button click and decrease the year (wrap around)", () => {
+		store.year = 2000
+		var year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]
+		var expectedYear = 2020;
+
+		mountWrap.find('#year-down').simulate('click');
 
 		expect(mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0]).toBe(expectedYear);
 	})
