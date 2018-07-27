@@ -12,11 +12,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = require("react");
 const React = __importStar(require("react"));
 const mobx_react_1 = require("mobx-react");
-require("./App.css");
+const WeatherCards_1 = __importDefault(require("./WeatherCards"));
+const AdditionalInfo_1 = __importDefault(require("./AdditionalInfo"));
+require("../App.css");
 let App = class App extends react_1.Component {
     constructor() {
         super(...arguments);
@@ -82,42 +87,48 @@ let App = class App extends react_1.Component {
     }
     render() {
         const { TestStore } = this.props;
+        let match = this.props.match;
+        var weatherInfo = [];
+        weatherInfo.push(<div key="parent">
+        <div id="top-arrow-container">
+          <i id="month-up" className="up" onClick={e => this.handleChangeDate(true, "month")}></i>
+          <i id="day-up" className="up" onClick={e => this.handleChangeDate(true, "day")}></i>
+          <i id="year-up" className="up" onClick={e => this.handleChangeDate(true, "year")}></i>
+        </div>
+        <div className="app">
+          {TestStore.returnDate}
+        </div>
+        <div id="bot-arrow-container">
+          <i id="month-down" className="down" onClick={e => this.handleChangeDate(false, "month")}></i>
+          <i id="day-down" className="down" onClick={e => this.handleChangeDate(false, "day")}></i>
+          <i id="year-down" className="down" onClick={e => this.handleChangeDate(false, "year")}></i>
+        </div>
+      </div>);
+        if (match.date !== undefined) {
+            let splitDate = match.date.split('-');
+            console.log(splitDate);
+            let parsedYear = parseInt(splitDate[0]);
+            let parsedMonth = parseInt(splitDate[1]);
+            let parsedDay = parseInt(splitDate[2]);
+            if (splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay)) {
+                console.log("matched date");
+                TestStore.changeYear(splitDate[0]);
+                TestStore.changeMonth(splitDate[1]);
+                TestStore.changeDay(splitDate[2]);
+            }
+            else {
+                //not valid date string - show 404 page
+            }
+        }
+        if (match.time !== undefined) {
+            weatherInfo.push(<AdditionalInfo_1.default key="AdditionalInfo"/>);
+        }
+        else {
+            weatherInfo.push(<WeatherCards_1.default key="weatherCards"/>);
+        }
         return (<div className="background">
-          <div id="top-arrow-container">
-            <i id="month-up" className="up" onClick={e => this.handleChangeDate(true, "month")}></i>
-            <i id="day-up" className="up" onClick={e => this.handleChangeDate(true, "day")}></i>
-            <i id="year-up" className="up" onClick={e => this.handleChangeDate(true, "year")}></i>
-          </div>
-          <div className="app">
-            {TestStore.returnDate}
-          </div>
-          <div id="bot-arrow-container">
-            <i id="month-down" className="down" onClick={e => this.handleChangeDate(false, "month")}></i>
-            <i id="day-down" className="down" onClick={e => this.handleChangeDate(false, "day")}></i>
-            <i id="year-down" className="down" onClick={e => this.handleChangeDate(false, "year")}></i>
-          </div>
-          <div id="container">
-            <div id="div1" className="weather">
-              <div className="time">
-                <div className="child">
-                  9 am
-                </div>
-              </div>
-              <div className="icon">
-                <img src={TestStore.returnWeatherForGivenHour(9)}/>
-              </div>
-              <div className="degrees">
-                <div className="child">
-                  {TestStore.returnTempForGivenHour(9)}
-                </div>
-              </div>
-            </div>
-            <div id="div2" className="weather"><div className="time"><div className="child">12 pm</div></div><div className="icon"><img src={TestStore.returnWeatherForGivenHour(12)}/></div><div className="degrees"><div className="child">{TestStore.returnTempForGivenHour(12)}</div></div></div>
-            <div id="div3" className="weather"><div className="time"><div className="child">3 pm</div></div><div className="icon"><img src={TestStore.returnWeatherForGivenHour(15)}/></div><div className="degrees"><div className="child">{TestStore.returnTempForGivenHour(15)}</div></div></div>
-            <div id="div4" className="weather"><div className="time"><div className="child">6 pm</div></div><div className="icon"><img src={TestStore.returnWeatherForGivenHour(18)}/></div><div className="degrees"><div className="child">{TestStore.returnTempForGivenHour(18)}</div></div></div>
-            <div id="div5" className="weather"><div className="time"><div className="child">9 pm</div></div><div className="icon"><img src={TestStore.returnWeatherForGivenHour(21)}/></div><div className="degrees"><div className="child">{TestStore.returnTempForGivenHour(21)}</div></div></div>
-          </div>
-        </div>);
+        {weatherInfo}
+      </div>);
     }
 };
 App = __decorate([

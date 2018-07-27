@@ -4,7 +4,8 @@ import React from 'react';
 import Enzyme from 'enzyme'
 import EnzymeAdapter from 'enzyme-adapter-react-16';
 import { shallow, mount, render } from 'enzyme';
-import App from './App'
+import App from './components/App'
+import TestUtils from "react-test-utils";
 
 // This sets up the adapter to be used by Enzyme
 Enzyme.configure({ adapter: new EnzymeAdapter() });
@@ -38,18 +39,18 @@ describe("\nTestStore Functions\n", () => {
 
 	it("should return temperature in Fahrenheit for a given hour(military time)", () => {
 		const store = TestStore;
-		store.day = 12;
+		store.day = 28;
 		store.month = 7;
 		store.year = 2018;
-		expect(store.returnTempForGivenHour(15)).toBe("76°F")
+		expect(store.ForGivenHour("temp", 9)).toBe("69°F")
 	});
 
 	it("should return image url for a given hour(military time)", () => {
 		const store = TestStore;
-		store.day = 12;
+		store.day = 28;
 		store.month = 7;
 		store.year = 2018;
-		expect(store.returnWeatherForGivenHour(15)).toBe("https://cdn4.iconfinder.com/data/icons/the-weather-is-nice-today/64/weather_3-512.png")
+		expect(store.ForGivenHour("weather", 9)).toBe("https://cdn4.iconfinder.com/data/icons/the-weather-is-nice-today/64/weather_3-512.png")
 	});
 
 	it("should return formatted date", () => {
@@ -63,23 +64,17 @@ describe("\nTestStore Functions\n", () => {
 	it("should return day", () => {
 		const store = TestStore;
 		store.day = 12;
-		store.month = 7;
-		store.year = 2018;
 		expect(store.returnDay).toBe(12)
 	});
 
 	it("should return month", () => {
 		const store = TestStore;
-		store.day = 12;
 		store.month = 7;
-		store.year = 2018;
 		expect(store.returnMonth).toBe(7)
 	});
 
 	it("should return year", () => {
 		const store = TestStore;
-		store.day = 12;
-		store.month = 7;
 		store.year = 2018;
 		expect(store.returnYear).toBe(2018)
 	})
@@ -311,19 +306,21 @@ describe("\nApp Component\n", () => {
 
 	it("should throw error if incorrect parameter for handChangeDate() is given", () => {
 
-		setFixtures('<div id="testContainer" onClick=handleChangedate(true, "test")></div>');
+		//let renderedComponent = TestUtils.renderIntoDocument(mountWrap);
 
-		let spyEvent = spyOnEvent('#testContainer', 'click');
+		//create test html
 
-		store.year = 2000;
+		//setup spy
 
-		let expectedYear = 2020;
+		//trigger the event
 
-		mountWrap.find('#year-down').simulate('click');
+		//verify it's been called 
 
-        let year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0];
+		//let spy = spyOn('#testContainer', 'click');
 
-		expect(year).toBe(expectedYear);
+       // let year = mountWrap.find('.app').text().split(" ").map(Number).filter(Boolean)[0];
+
+		
 	})
 
 });
