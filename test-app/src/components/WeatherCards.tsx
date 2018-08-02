@@ -6,8 +6,22 @@ import TestStore from '../stores/TestStore';
 
 @inject('TestStore')
 @observer
-
 class WeatherCards extends Component<any, {}> {
+
+	componentDidMount() {
+
+		const {day} = this.props;
+		const {month} = this.props;
+		const {year} = this.props;
+
+		//if defined - update values / not defined - do nothing
+		if(day !== undefined && month !== undefined && year !== undefined) {
+			TestStore.changeYear(year);
+        	TestStore.changeMonth(month);
+        	TestStore.changeDay(day);
+		}
+
+	}
 
 	render() {
 

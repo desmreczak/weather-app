@@ -4,11 +4,11 @@ import {inject, observer} from 'mobx-react';
 import WeatherCards from './WeatherCards';
 import AdditionalInfo from './AdditionalInfo';
 import '../App.css';
+import * as actions from '../actions/action';
 
 @inject('TestStore')
 @observer
-
-class App extends Component<any, any> {
+class App extends Component<any, {}> {
 
   handleChangeDate = (increaseDate: boolean, typeOfDate: string) => {
 
@@ -64,15 +64,15 @@ class App extends Component<any, any> {
     switch (typeOfDate) {
 
       case "day":
-      isNaN(resetValue) ? store.changeDay(currentTypeOfDate + incrementBy) : store.changeDay(resetValue);
+      isNaN(resetValue) ? actions.updateDay(currentTypeOfDate + incrementBy) : actions.updateDay(resetValue);
       break;
 
       case "month":
-      isNaN(resetValue) ? store.changeMonth(currentTypeOfDate + incrementBy) : store.changeMonth(resetValue);
+      isNaN(resetValue) ? actions.updateMonth(currentTypeOfDate + incrementBy) : actions.updateMonth(resetValue);
       break;
 
       case "year":
-      isNaN(resetValue) ? store.changeYear(currentTypeOfDate + incrementBy) : store.changeYear(resetValue);
+      isNaN(resetValue) ? actions.updateYear(currentTypeOfDate + incrementBy) : actions.updateYear(resetValue);
       break;
 
       default:
@@ -89,6 +89,10 @@ class App extends Component<any, any> {
     const {TestStore} = this.props;
 
     let match = this.props.match;
+
+    let date = match.params.date;
+
+    let time = parseInt(match.params.time);
 
     var weatherInfo: any[] = [];
 
@@ -110,11 +114,7 @@ class App extends Component<any, any> {
       </div>
       );
 
-    if (match.date !== undefined) {
-
-      let splitDate: string[] = match.date.split('-');
-
-      console.log(splitDate);
+      let splitDate: string[] = (date !== undefined) ? date.split('-') : [NaN, NaN, NaN];
 
       let parsedYear: number = parseInt(splitDate[0]);
 
@@ -122,30 +122,35 @@ class App extends Component<any, any> {
 
       let parsedDay: number = parseInt(splitDate[2]);
 
-      if (splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay)) {
+    //if undefined - show today's weather cards
+    if (date === undefined) {
 
-        console.log("matched date");
-
-        TestStore.changeYear(splitDate[0]);
-        TestStore.changeMonth(splitDate[1]);
-        TestStore.changeDay(splitDate[2]);
-
-      } else {
-
-        //not valid date string - show 404 page
-
-      }
-
-    }
-
-    if (match.time !== undefined) {
-
-      weatherInfo.push(<AdditionalInfo key="AdditionalInfo" />);
-
-    } else {
-
+      //show weather cards
       weatherInfo.push(<WeatherCards key="weatherCards" />);
 
+
+    //if date valid and time not defined - show weather cards of given date
+    } else if (splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay) && (time === undefined || isNaN(time))) {
+
+      weatherInfo.push(<WeatherCards key="weatherCards" day={parsedDay} month={parsedMonth} year={parsedYear} />);
+
+    //if date and time valid - show additional info
+    } else if ((splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay)) && (time === 9 || time === 12 || time === 15 || time === 18 || time === 21)) {
+
+      weatherInfo.push(<AdditionalInfo key="AdditionalInfo" day={parsedDay} month={parsedMonth} year={parsedYear} time={time} />);
+
+    //either date or time are not valid - show 404
+    } else {
+          
+          //show 404 page
+          console.log("Not valid date or time.");
+          return (
+            <div id="pageNotFound">
+            404
+            <br />
+            Page Not Found
+            </div>
+            );
     }
 
     return (
@@ -153,7 +158,6 @@ class App extends Component<any, any> {
         {weatherInfo}
       </div>
       );
-
   }
 
 }

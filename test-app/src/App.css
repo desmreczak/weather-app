@@ -18,7 +18,7 @@ body {
   text-align: center;
   font-size: 4.2em;
   color: white;
-  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+  text-shadow: -1px 2px black, 2px 1px black, 1px 2px black, 2px -1px black;
   opacity: 0.9;
   user-select: none;
   -webkit-transform: translateY(135%);
@@ -197,6 +197,27 @@ img {
 #div5 {
   -webkit-animation-delay: 500ms;
           animation-delay: 500ms;
+}
+
+#addInfo {
+  background: rgba(0, 0, 0, 0.3);
+  padding-left: 5%;
+  width: 58%;
+  font-size: 3.5em;
+  border-radius: 1em;
+  color: whitesmoke;
+  -webkit-transform: translate(45%, 80%);
+  -ms-transform: translate(45%, 80%);
+  transform: translate(45%, 80%);
+}
+
+#pageNotFound {
+  padding-top: 5%;
+  padding-left: 5%;
+  text-shadow: -1px 2px black, 2px 1px black, 1px 2px black, 2px -1px black;
+  width: 58%;
+  font-size: 3.5em;
+  color: whitesmoke;
 }
 
 @-webkit-keyframes fadeIn {

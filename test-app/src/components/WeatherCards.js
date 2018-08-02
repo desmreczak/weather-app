@@ -12,12 +12,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = require("react");
 const React = __importStar(require("react"));
 const mobx_react_1 = require("mobx-react");
 require("../App.css");
+const TestStore_1 = __importDefault(require("../stores/TestStore"));
 let WeatherCards = class WeatherCards extends react_1.Component {
+    componentDidMount() {
+        const { day } = this.props;
+        const { month } = this.props;
+        const { year } = this.props;
+        //if defined - update values / not defined - do nothing
+        if (day !== undefined && month !== undefined && year !== undefined) {
+            TestStore_1.default.changeYear(year);
+            TestStore_1.default.changeMonth(month);
+            TestStore_1.default.changeDay(day);
+        }
+    }
     render() {
         const { TestStore } = this.props;
         let cards = [];

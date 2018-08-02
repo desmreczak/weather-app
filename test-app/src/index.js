@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import App from './components/App';
-import AdditionalInfo from './components/AdditionalInfo';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 import {Provider} from 'mobx-react';
@@ -15,9 +14,16 @@ const Root = (
 			<main>
 				<Switch>
 					<Route exact path={"/"} component={App} />
-					<Route path={"/today"} component={App} />
+					<Route exact path={"/today"} component={App} />
 					<Route exact path={"/:date"} component={App} />
-					<Route path={"/:date/:time"} component={App} />
+					<Route exact path={"/:date/:time"} component={App} />
+					<Route render={() =>
+						<div id="pageNotFound">
+            				404
+            				<br />
+            				Page Not Found
+            			</div>
+            		} />
 				</Switch>
 			</main>
 		</BrowserRouter>

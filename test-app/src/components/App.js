@@ -22,6 +22,7 @@ const mobx_react_1 = require("mobx-react");
 const WeatherCards_1 = __importDefault(require("./WeatherCards"));
 const AdditionalInfo_1 = __importDefault(require("./AdditionalInfo"));
 require("../App.css");
+const actions = __importStar(require("../actions/action"));
 let App = class App extends react_1.Component {
     constructor() {
         super(...arguments);
@@ -67,13 +68,13 @@ let App = class App extends react_1.Component {
             }
             switch (typeOfDate) {
                 case "day":
-                    isNaN(resetValue) ? store.changeDay(currentTypeOfDate + incrementBy) : store.changeDay(resetValue);
+                    isNaN(resetValue) ? actions.updateDay(currentTypeOfDate + incrementBy) : actions.updateDay(resetValue);
                     break;
                 case "month":
-                    isNaN(resetValue) ? store.changeMonth(currentTypeOfDate + incrementBy) : store.changeMonth(resetValue);
+                    isNaN(resetValue) ? actions.updateMonth(currentTypeOfDate + incrementBy) : actions.updateMonth(resetValue);
                     break;
                 case "year":
-                    isNaN(resetValue) ? store.changeYear(currentTypeOfDate + incrementBy) : store.changeYear(resetValue);
+                    isNaN(resetValue) ? actions.updateYear(currentTypeOfDate + incrementBy) : actions.updateYear(resetValue);
                     break;
                 default:
                     try {
@@ -88,6 +89,8 @@ let App = class App extends react_1.Component {
     render() {
         const { TestStore } = this.props;
         let match = this.props.match;
+        let date = match.params.date;
+        let time = parseInt(match.params.time);
         var weatherInfo = [];
         weatherInfo.push(<div key="parent">
         <div id="top-arrow-container">
@@ -104,27 +107,32 @@ let App = class App extends react_1.Component {
           <i id="year-down" className="down" onClick={e => this.handleChangeDate(false, "year")}></i>
         </div>
       </div>);
-        if (match.date !== undefined) {
-            let splitDate = match.date.split('-');
-            console.log(splitDate);
-            let parsedYear = parseInt(splitDate[0]);
-            let parsedMonth = parseInt(splitDate[1]);
-            let parsedDay = parseInt(splitDate[2]);
-            if (splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay)) {
-                console.log("matched date");
-                TestStore.changeYear(splitDate[0]);
-                TestStore.changeMonth(splitDate[1]);
-                TestStore.changeDay(splitDate[2]);
-            }
-            else {
-                //not valid date string - show 404 page
-            }
+        let splitDate = (date !== undefined) ? date.split('-') : [NaN, NaN, NaN];
+        let parsedYear = parseInt(splitDate[0]);
+        let parsedMonth = parseInt(splitDate[1]);
+        let parsedDay = parseInt(splitDate[2]);
+        //if undefined - show today's weather cards
+        if (date === undefined) {
+            //show weather cards
+            weatherInfo.push(<WeatherCards_1.default key="weatherCards"/>);
+            //if date valid and time not defined - show weather cards of given date
         }
-        if (match.time !== undefined) {
-            weatherInfo.push(<AdditionalInfo_1.default key="AdditionalInfo"/>);
+        else if (splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay) && (time === undefined || isNaN(time))) {
+            weatherInfo.push(<WeatherCards_1.default key="weatherCards" day={parsedDay} month={parsedMonth} year={parsedYear}/>);
+            //if date and time valid - show additional info
+        }
+        else if ((splitDate.length === 3 && !isNaN(parsedYear) && !isNaN(parsedMonth) && !isNaN(parsedDay)) && (time === 9 || time === 12 || time === 15 || time === 18 || time === 21)) {
+            weatherInfo.push(<AdditionalInfo_1.default key="AdditionalInfo" day={parsedDay} month={parsedMonth} year={parsedYear} time={time}/>);
+            //either date or time are not valid - show 404
         }
         else {
-            weatherInfo.push(<WeatherCards_1.default key="weatherCards"/>);
+            //show 404 page
+            console.log("Not valid date or time.");
+            return (<div id="pageNotFound">
+            404
+            <br />
+            Page Not Found
+            </div>);
         }
         return (<div className="background">
         {weatherInfo}
