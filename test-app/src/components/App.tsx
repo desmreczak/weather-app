@@ -5,10 +5,11 @@ import WeatherCards from './WeatherCards';
 import AdditionalInfo from './AdditionalInfo';
 import '../App.css';
 import * as actions from '../actions/action';
+import TestStore from '../stores/TestStore';
 
 @inject('TestStore')
 @observer
-class App extends Component<any, {}> {
+class App extends Component<any> {
 
   handleChangeDate = (increaseDate: boolean, typeOfDate: string) => {
 
@@ -84,15 +85,15 @@ class App extends Component<any, {}> {
     }
   }
 
-  render() {
+  render(): JSX.Element {
 
-    const {TestStore} = this.props;
+    const store = this.props.TestStore;
 
-    let match = this.props.match;
+    let {match} = this.props;
 
     let date = match.params.date;
 
-    let time = parseInt(match.params.time);
+    let time = parseInt(match.params.time, 10);
 
     var weatherInfo: any[] = [];
 
@@ -104,7 +105,7 @@ class App extends Component<any, {}> {
           <i id="year-up" className="up" onClick={e => this.handleChangeDate(true, "year")}></i>
         </div>
         <div className="app">
-          {TestStore.returnDate}
+          {store.returnDate}
         </div>
         <div id="bot-arrow-container">
           <i id="month-down" className="down" onClick={e => this.handleChangeDate(false, "month")}></i>
@@ -116,11 +117,11 @@ class App extends Component<any, {}> {
 
       let splitDate: string[] = (date !== undefined) ? date.split('-') : [NaN, NaN, NaN];
 
-      let parsedYear: number = parseInt(splitDate[0]);
+      let parsedYear: number = parseInt(splitDate[0], 10);
 
-      let parsedMonth: number = parseInt(splitDate[1]);
+      let parsedMonth: number = parseInt(splitDate[1], 10);
 
-      let parsedDay: number = parseInt(splitDate[2]);
+      let parsedDay: number = parseInt(splitDate[2], 10);
 
     //if undefined - show today's weather cards
     if (date === undefined) {
@@ -143,7 +144,7 @@ class App extends Component<any, {}> {
     } else {
           
           //show 404 page
-          console.log("Not valid date or time.");
+          console.error("Not valid date or time.");
           return (
             <div id="pageNotFound">
             404

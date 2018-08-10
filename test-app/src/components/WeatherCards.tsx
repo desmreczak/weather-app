@@ -3,10 +3,11 @@ import * as React from 'react';
 import {inject, observer} from 'mobx-react';
 import '../App.css';
 import TestStore from '../stores/TestStore';
+import {Link} from 'react-router-dom';
 
 @inject('TestStore')
 @observer
-class WeatherCards extends Component<any, {}> {
+class WeatherCards extends Component<any> {
 
 	componentDidMount() {
 
@@ -23,7 +24,7 @@ class WeatherCards extends Component<any, {}> {
 
 	}
 
-	render() {
+	render(): JSX.Element {
 
 		const {TestStore} = this.props;
 
@@ -37,21 +38,23 @@ class WeatherCards extends Component<any, {}> {
 				timeSuffix = (i < 12) ? " am" : " pm";
 				TwelveHourClock = (i === 12) ? 12 : (i % 12);
 
-				cards.push(
+				cards.push( 
 					<div id="div1" key={i} className="weather">
+					<Link to={`/${TestStore.returnYear}-${TestStore.returnMonth}-${TestStore.returnDay}/${i}`} style={{textDecoration: 'none'}}>
 						<div className="time">
 							<div className="child">
 							{TwelveHourClock} {timeSuffix}
 							</div>
 						</div>
 						<div className="icon">
-							<img src={TestStore.ForGivenHour("weather", i)} />
+							<img src={TestStore.ForGivenHour("weather", i)} alt="" />
 						</div>
 						<div className="degrees">
 							<div className="child">
 								{TestStore.ForGivenHour("temp", i)}
 							</div>
 						</div>
+						</Link>
 					</div>
 				);
 			}

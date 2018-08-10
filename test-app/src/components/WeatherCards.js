@@ -21,6 +21,7 @@ const React = __importStar(require("react"));
 const mobx_react_1 = require("mobx-react");
 require("../App.css");
 const TestStore_1 = __importDefault(require("../stores/TestStore"));
+const react_router_dom_1 = require("react-router-dom");
 let WeatherCards = class WeatherCards extends react_1.Component {
     componentDidMount() {
         const { day } = this.props;
@@ -43,19 +44,21 @@ let WeatherCards = class WeatherCards extends react_1.Component {
             timeSuffix = (i < 12) ? " am" : " pm";
             TwelveHourClock = (i === 12) ? 12 : (i % 12);
             cards.push(<div id="div1" key={i} className="weather">
+					<react_router_dom_1.Link to={`/${TestStore.returnYear}-${TestStore.returnMonth}-${TestStore.returnDay}/${i}`} style={{ textDecoration: 'none' }}>
 						<div className="time">
 							<div className="child">
 							{TwelveHourClock} {timeSuffix}
 							</div>
 						</div>
 						<div className="icon">
-							<img src={TestStore.ForGivenHour("weather", i)}/>
+							<img src={TestStore.ForGivenHour("weather", i)} alt=""/>
 						</div>
 						<div className="degrees">
 							<div className="child">
 								{TestStore.ForGivenHour("temp", i)}
 							</div>
 						</div>
+						</react_router_dom_1.Link>
 					</div>);
         }
         return (<div id="container">

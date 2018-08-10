@@ -6,55 +6,56 @@ import EnzymeAdapter from 'enzyme-adapter-react-16';
 import { shallow, mount, render } from 'enzyme';
 import App from './components/App'
 import TestUtils from "react-test-utils";
+import {Provider} from 'mobx-react';
+import {BrowserRouter, Switch, Route} from 'react-router-dom';
 
 // This sets up the adapter to be used by Enzyme
 Enzyme.configure({ adapter: new EnzymeAdapter() });
 
 describe("\nTestStore Functions\n", () => {
 
+	let store;
+
+	beforeEach(() => {
+		store = TestStore;
+	});
+
 	it("should start with the current date", () => {
-		const store = TestStore;
 		expect(store.day).toBe(new Date().getDate());
 		expect(store.month).toBe(new Date().getMonth() + 1);
 		expect(store.year).toBe(new Date().getFullYear());
 	});
 
 	it("should set the day", () => {
-		const store = TestStore;
 		store.changeDay(12);
 		expect(store.day).toBe(12)
 	});
 
 	it("should set the month", () => {
-		const store = TestStore;
 		store.changeMonth(12);
 		expect(store.month).toBe(12)
 	});
 
 	it("should set the year", () => {
-		const store = TestStore;
 		store.changeYear(12);
 		expect(store.year).toBe(12)
 	});
 
 	it("should return temperature in Fahrenheit for a given hour(military time)", () => {
-		const store = TestStore;
-		store.day = 28;
-		store.month = 7;
+		store.day = 5;
+		store.month = 8;
 		store.year = 2018;
-		expect(store.ForGivenHour("temp", 9)).toBe("69°F")
+		expect(store.ForGivenHour("temp", 9)).toBe("66°F")
 	});
 
 	it("should return image url for a given hour(military time)", () => {
-		const store = TestStore;
-		store.day = 28;
-		store.month = 7;
+		store.day = 5;
+		store.month = 8;
 		store.year = 2018;
 		expect(store.ForGivenHour("weather", 9)).toBe("https://cdn4.iconfinder.com/data/icons/the-weather-is-nice-today/64/weather_3-512.png")
 	});
 
 	it("should return formatted date", () => {
-		const store = TestStore;
 		store.day = 12;
 		store.month = 7;
 		store.year = 2018;
@@ -62,25 +63,28 @@ describe("\nTestStore Functions\n", () => {
 	});
 
 	it("should return day", () => {
-		const store = TestStore;
 		store.day = 12;
 		expect(store.returnDay).toBe(12)
 	});
 
 	it("should return month", () => {
-		const store = TestStore;
 		store.month = 7;
 		expect(store.returnMonth).toBe(7)
 	});
 
 	it("should return year", () => {
-		const store = TestStore;
 		store.year = 2018;
 		expect(store.returnYear).toBe(2018)
 	})
 });
 
 describe("\nTestStore Helper Functions\n", () => {
+
+	let store;
+
+	beforeEach(() => {
+		store = TestStore;
+	});
 
 	it("should format a given month, day, year", () => {
 		let day = 12;
@@ -132,7 +136,6 @@ describe("\nTestStore Helper Functions\n", () => {
 	});
 
 	it("should return a url from a given weather and array of icon urls", () => {
-		const store = TestStore;
 		let urls = store.weatherIcons;
 		expect(getIconURL("Clear", urls)).toBe("https://cdn4.iconfinder.com/data/icons/the-weather-is-nice-today/64/weather_3-512.png");
 		expect(getIconURL("", urls)).toBe("")
@@ -142,27 +145,56 @@ describe("\nTestStore Helper Functions\n", () => {
 
 describe("\nApp Component\n", () => {
 
-	const store = TestStore;
-	const shallowWrap = shallow(<App TestStore={store} />);
-	const renderWrap = render(<App TestStore={store} />);
-	const mountWrap = mount(<App TestStore={store} />);
+	let store = TestStore;
+
+	let shallowWrap; 
+	let mountWrap;
+
+	let monthsList;
+
+	beforeAll(() => {
+		shallowWrap = shallow(<App TestStore={store}/>);
+		mountWrap = mount(
+			<Provider TestStore={TestStore}>
+				<BrowserRouter>
+					<main>
+						<Switch>
+							<Route exact path={"/"} component={App} />
+							<Route exact path={"/today"} component={App} />
+							<Route exact path={"/:date"} component={App} />
+							<Route exact path={"/:date/:time"} component={App} />
+							<Route render={() =>
+								<div id="pageNotFound">
+		            				404
+		            				<br />
+		            				Page Not Found
+		            			</div>
+		            		} />
+						</Switch>
+					</main>
+				</BrowserRouter>
+			</Provider>
+			);
+
+		monthsList = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	});
 
 	it("should render App component", () => {
 		expect(shallowWrap).toHaveLength(1);
 	});
 
 	it("should render the date", () => {
-		expect(renderWrap.find(".app").length).toBe(1);
+		expect(mountWrap.find(".app").length).toBe(1);
 	});
 
 	it("should render 5 weather containers", () => {
-		expect(renderWrap.find(".weather").length).toBe(5);
+		expect(mountWrap.find(".weather").length).toBe(5);
 	});
 
 	it("should respond to button click and increase the month (no wrapping)", () => {
 		store.month = 1;
 
-		let monthsList = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		let expectedMonth = monthsList[store.month + 1];
 
 		mountWrap.find('#month-up').simulate('click');
@@ -187,7 +219,6 @@ describe("\nApp Component\n", () => {
 	it("should respond to button click and decrease the month (no wrapping)", () => {
 		store.month = 12;
 
-		let monthsList = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		let expectedMonth = monthsList[store.month - 1];
 
 		mountWrap.find('#month-down').simulate('click');
@@ -295,6 +326,7 @@ describe("\nApp Component\n", () => {
 
 	it("should respond to button click and decrease the year (wrap around)", () => {
 		store.year = 2000;
+
 		let expectedYear = 2020;
 
 		mountWrap.find('#year-down').simulate('click');

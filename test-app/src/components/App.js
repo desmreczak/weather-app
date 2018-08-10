@@ -87,10 +87,10 @@ let App = class App extends react_1.Component {
         };
     }
     render() {
-        const { TestStore } = this.props;
-        let match = this.props.match;
+        const store = this.props.TestStore;
+        let { match } = this.props;
         let date = match.params.date;
-        let time = parseInt(match.params.time);
+        let time = parseInt(match.params.time, 10);
         var weatherInfo = [];
         weatherInfo.push(<div key="parent">
         <div id="top-arrow-container">
@@ -99,7 +99,7 @@ let App = class App extends react_1.Component {
           <i id="year-up" className="up" onClick={e => this.handleChangeDate(true, "year")}></i>
         </div>
         <div className="app">
-          {TestStore.returnDate}
+          {store.returnDate}
         </div>
         <div id="bot-arrow-container">
           <i id="month-down" className="down" onClick={e => this.handleChangeDate(false, "month")}></i>
@@ -108,9 +108,9 @@ let App = class App extends react_1.Component {
         </div>
       </div>);
         let splitDate = (date !== undefined) ? date.split('-') : [NaN, NaN, NaN];
-        let parsedYear = parseInt(splitDate[0]);
-        let parsedMonth = parseInt(splitDate[1]);
-        let parsedDay = parseInt(splitDate[2]);
+        let parsedYear = parseInt(splitDate[0], 10);
+        let parsedMonth = parseInt(splitDate[1], 10);
+        let parsedDay = parseInt(splitDate[2], 10);
         //if undefined - show today's weather cards
         if (date === undefined) {
             //show weather cards
@@ -127,7 +127,7 @@ let App = class App extends react_1.Component {
         }
         else {
             //show 404 page
-            console.log("Not valid date or time.");
+            console.error("Not valid date or time.");
             return (<div id="pageNotFound">
             404
             <br />

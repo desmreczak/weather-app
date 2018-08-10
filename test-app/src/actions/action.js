@@ -1,4 +1,4 @@
-import dispatcher from "../dispatcher";
+import dispatcher from "../dispatcher/dispatcher";
 
 export function updateDay(day) {
 	dispatcher.dispatch({

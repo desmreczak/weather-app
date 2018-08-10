@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mobx_1 = require("mobx");
-const dispatcher_1 = __importDefault(require("../dispatcher"));
+const dispatcher_1 = __importDefault(require("../dispatcher/dispatcher"));
 class TestStore {
     constructor() {
         this.today = new Date();
@@ -58,7 +58,7 @@ class TestStore {
         for (i = 0; i < forecastList.length; i++) {
             parsedDate = parseDate(forecastList[i].dt_txt);
             parsedHour = parseHour(forecastList[i].dt_txt);
-            if (parseInt(this.day) === parsedDate[0] && this.month === parsedDate[1] && this.year === parsedDate[2] && hour === parsedHour) {
+            if (parseInt(this.day, 10) === parsedDate[0] && this.month === parsedDate[1] && this.year === parsedDate[2] && hour === parsedHour) {
                 switch (info) {
                     case "temp":
                         return KelvinToFahrenheit(forecastList[i].main.temp) + "°F";
@@ -158,7 +158,7 @@ exports.formatMonth = formatMonth;
 function formatDay(day) {
     let days = ["", "st", "nd", "rd", "rth", "th"];
     let tempArray = ("" + day).split("");
-    let lastDigitOfDay = parseInt(tempArray[tempArray.length - 1]);
+    let lastDigitOfDay = parseInt(tempArray[tempArray.length - 1], 10);
     if ((lastDigitOfDay < 5 && lastDigitOfDay > 0) && (day < 10 || day > 20)) {
         return "" + day + days[lastDigitOfDay];
     }
@@ -169,12 +169,12 @@ function formatDay(day) {
 exports.formatDay = formatDay;
 function parseHour(date) {
     let parsedHour = date.split(/[\s:]+/);
-    return parseInt(parsedHour[1]);
+    return parseInt(parsedHour[1], 10);
 }
 exports.parseHour = parseHour;
 function parseDate(date) {
     let temp = date.split(/[\s-]+/);
-    let parsedDate = [parseInt(temp[2]), parseInt(temp[1]), parseInt(temp[0])];
+    let parsedDate = [parseInt(temp[2], 10), parseInt(temp[1], 10), parseInt(temp[0], 10)];
     return parsedDate;
 }
 exports.parseDate = parseDate;

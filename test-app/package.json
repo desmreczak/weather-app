@@ -105,6 +105,7 @@
     "extends": "react-app"
   },
   "devDependencies": {
+    "@types/flux": "^3.1.7",
     "babel-jest": "^20.0.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",

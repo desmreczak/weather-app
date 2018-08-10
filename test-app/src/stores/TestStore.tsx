@@ -1,6 +1,6 @@
 import {observable, action, computed} from 'mobx';
 import * as React from 'react';
-import dispatcher from '../dispatcher';
+import dispatcher from '../dispatcher/dispatcher';
 
 class TestStore {
 
@@ -60,7 +60,7 @@ class TestStore {
 			parsedDate = parseDate(forecastList[i].dt_txt);
 			parsedHour = parseHour(forecastList[i].dt_txt);
 
-			if(parseInt(this.day) === parsedDate[0] && this.month === parsedDate[1] && this.year === parsedDate[2] && hour === parsedHour) {
+			if(parseInt(this.day, 10) === parsedDate[0] && this.month === parsedDate[1] && this.year === parsedDate[2] && hour === parsedHour) {
 				
 				switch(info) {
 
@@ -128,7 +128,7 @@ function formatDay(day: number): string {
 	let days: string[] = ["", "st", "nd", "rd", "rth", "th"];
 
 	let tempArray: string[] = ("" + day).split("")
-	let lastDigitOfDay: number = parseInt(tempArray[tempArray.length - 1])
+	let lastDigitOfDay: number = parseInt(tempArray[tempArray.length - 1], 10)
 
 	if((lastDigitOfDay < 5 && lastDigitOfDay > 0) && (day < 10 || day > 20)) {
 		return "" + day + days[lastDigitOfDay];
@@ -139,12 +139,12 @@ function formatDay(day: number): string {
 
 function parseHour(date: string): number {
 	let parsedHour: string[] = date.split(/[\s:]+/);
-	return parseInt(parsedHour[1]);
+	return parseInt(parsedHour[1], 10);
 }
 
 function parseDate(date: string): number[] {
 	let temp: string[] = date.split(/[\s-]+/);
-	let parsedDate: number[] = [parseInt(temp[2]), parseInt(temp[1]), parseInt(temp[0])];
+	let parsedDate: number[] = [parseInt(temp[2], 10), parseInt(temp[1], 10), parseInt(temp[0], 10)];
 	return parsedDate;
 }
 

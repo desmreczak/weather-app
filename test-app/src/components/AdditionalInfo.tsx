@@ -6,7 +6,7 @@ import TestStore from '../stores/TestStore';
 
 @inject('TestStore')
 @observer
-class AdditionalInfo extends Component<any, {}> {
+class AdditionalInfo extends Component<any> {
 
 	componentDidMount() {
 
@@ -23,7 +23,7 @@ class AdditionalInfo extends Component<any, {}> {
 
 	}
 
-	render() {
+	render(): JSX.Element {
 
 		const {TestStore} = this.props;
 		const {time} = this.props;
